@@ -129,6 +129,10 @@ pub fn new_raw_scorer<'a>(
         VectorStorageEnum::MultiDenseAppendableInRamHalf(vs) => {
             raw_multi_scorer_impl(query, vs.as_ref(), hc)
         }
+        VectorStorageEnum::Vde(_vs) => {
+            // VDE doesn't support raw scoring (uses its own native search)
+            Err(OperationError::service_error("VDE uses native search, raw scoring not supported"))
+        }
     }
 }
 

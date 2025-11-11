@@ -66,6 +66,12 @@ impl PayloadProvider {
                     .unwrap_or_else(|err| panic!("Payload storage is corrupted: {err}"));
                 Some(OwnedPayloadRef::from(payload))
             }
+            PayloadStorageEnum::Vde(s) => {
+                let payload = s
+                    .get(point_id, hw_counter)
+                    .unwrap_or_else(|err| panic!("Payload storage is corrupted: {err}"));
+                Some(OwnedPayloadRef::from(payload))
+            }
         };
 
         let payload = if let Some(payload_ptr) = payload_ptr_opt {

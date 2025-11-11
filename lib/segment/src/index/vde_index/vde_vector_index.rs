@@ -16,6 +16,7 @@ use crate::types::{Distance, Filter, SearchParams};
 ///
 /// This wraps the VDE C++ engine and implements Qdrant's VectorIndex trait.
 /// VDE manages both the HNSW index (via vsag) and vector storage (via Btrieve2).
+#[derive(Debug)]
 pub struct VDEVectorIndex {
     /// VDE Collection handle (owned by VDE Engine)
     collection: VDECollectionHandle,

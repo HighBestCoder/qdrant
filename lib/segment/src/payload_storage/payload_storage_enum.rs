@@ -15,6 +15,7 @@ use crate::payload_storage::mmap_payload_storage::MmapPayloadStorage;
 use crate::payload_storage::on_disk_payload_storage::OnDiskPayloadStorage;
 #[cfg(feature = "rocksdb")]
 use crate::payload_storage::simple_payload_storage::SimplePayloadStorage;
+use crate::payload_storage::vde_storage::vde_payload_storage::VDEPayloadStorage;
 use crate::types::Payload;
 
 #[derive(Debug)]
@@ -26,6 +27,7 @@ pub enum PayloadStorageEnum {
     #[cfg(feature = "rocksdb")]
     OnDiskPayloadStorage(OnDiskPayloadStorage),
     MmapPayloadStorage(MmapPayloadStorage),
+    Vde(VDEPayloadStorage),
 }
 
 #[cfg(feature = "testing")]
@@ -76,6 +78,7 @@ impl PayloadStorage for PayloadStorageEnum {
                 s.overwrite(point_id, payload, hw_counter)
             }
             PayloadStorageEnum::MmapPayloadStorage(s) => s.overwrite(point_id, payload, hw_counter),
+            PayloadStorageEnum::Vde(s) => s.overwrite(point_id, payload, hw_counter),
         }
     }
 
@@ -93,6 +96,7 @@ impl PayloadStorage for PayloadStorageEnum {
             #[cfg(feature = "rocksdb")]
             PayloadStorageEnum::OnDiskPayloadStorage(s) => s.set(point_id, payload, hw_counter),
             PayloadStorageEnum::MmapPayloadStorage(s) => s.set(point_id, payload, hw_counter),
+            PayloadStorageEnum::Vde(s) => s.set(point_id, payload, hw_counter),
         }
     }
 
@@ -119,6 +123,9 @@ impl PayloadStorage for PayloadStorageEnum {
             PayloadStorageEnum::MmapPayloadStorage(s) => {
                 s.set_by_key(point_id, payload, key, hw_counter)
             }
+            PayloadStorageEnum::Vde(s) => {
+                s.set_by_key(point_id, payload, key, hw_counter)
+            }
         }
     }
 
@@ -135,6 +142,7 @@ impl PayloadStorage for PayloadStorageEnum {
             #[cfg(feature = "rocksdb")]
             PayloadStorageEnum::OnDiskPayloadStorage(s) => s.get(point_id, hw_counter),
             PayloadStorageEnum::MmapPayloadStorage(s) => s.get(point_id, hw_counter),
+            PayloadStorageEnum::Vde(s) => s.get(point_id, hw_counter),
         }
     }
 
@@ -151,6 +159,7 @@ impl PayloadStorage for PayloadStorageEnum {
             #[cfg(feature = "rocksdb")]
             PayloadStorageEnum::OnDiskPayloadStorage(s) => s.get_sequential(point_id, hw_counter),
             PayloadStorageEnum::MmapPayloadStorage(s) => s.get_sequential(point_id, hw_counter),
+            PayloadStorageEnum::Vde(s) => s.get_sequential(point_id, hw_counter),
         }
     }
 
@@ -168,6 +177,7 @@ impl PayloadStorage for PayloadStorageEnum {
             #[cfg(feature = "rocksdb")]
             PayloadStorageEnum::OnDiskPayloadStorage(s) => s.delete(point_id, key, hw_counter),
             PayloadStorageEnum::MmapPayloadStorage(s) => s.delete(point_id, key, hw_counter),
+            PayloadStorageEnum::Vde(s) => s.delete(point_id, key, hw_counter),
         }
     }
 
@@ -184,6 +194,7 @@ impl PayloadStorage for PayloadStorageEnum {
             #[cfg(feature = "rocksdb")]
             PayloadStorageEnum::OnDiskPayloadStorage(s) => s.clear(point_id, hw_counter),
             PayloadStorageEnum::MmapPayloadStorage(s) => s.clear(point_id, hw_counter),
+            PayloadStorageEnum::Vde(s) => s.clear(point_id, hw_counter),
         }
     }
 
@@ -197,6 +208,7 @@ impl PayloadStorage for PayloadStorageEnum {
             #[cfg(feature = "rocksdb")]
             PayloadStorageEnum::OnDiskPayloadStorage(s) => s.clear_all(hw_counter),
             PayloadStorageEnum::MmapPayloadStorage(s) => s.clear_all(hw_counter),
+            PayloadStorageEnum::Vde(s) => s.clear_all(hw_counter),
         }
     }
 
@@ -209,6 +221,7 @@ impl PayloadStorage for PayloadStorageEnum {
             #[cfg(feature = "rocksdb")]
             PayloadStorageEnum::OnDiskPayloadStorage(s) => s.flusher(),
             PayloadStorageEnum::MmapPayloadStorage(s) => s.flusher(),
+            PayloadStorageEnum::Vde(s) => s.flusher(),
         }
     }
 
@@ -224,6 +237,7 @@ impl PayloadStorage for PayloadStorageEnum {
             #[cfg(feature = "rocksdb")]
             PayloadStorageEnum::OnDiskPayloadStorage(s) => s.iter(callback, hw_counter),
             PayloadStorageEnum::MmapPayloadStorage(s) => s.iter(callback, hw_counter),
+            PayloadStorageEnum::Vde(s) => s.iter(callback, hw_counter),
         }
     }
 
@@ -236,6 +250,7 @@ impl PayloadStorage for PayloadStorageEnum {
             #[cfg(feature = "rocksdb")]
             PayloadStorageEnum::OnDiskPayloadStorage(s) => s.files(),
             PayloadStorageEnum::MmapPayloadStorage(s) => s.files(),
+            PayloadStorageEnum::Vde(s) => s.files(),
         }
     }
 
@@ -248,6 +263,7 @@ impl PayloadStorage for PayloadStorageEnum {
             #[cfg(feature = "rocksdb")]
             PayloadStorageEnum::OnDiskPayloadStorage(s) => s.immutable_files(),
             PayloadStorageEnum::MmapPayloadStorage(s) => s.immutable_files(),
+            PayloadStorageEnum::Vde(s) => s.immutable_files(),
         }
     }
 
@@ -260,6 +276,7 @@ impl PayloadStorage for PayloadStorageEnum {
             #[cfg(feature = "rocksdb")]
             PayloadStorageEnum::OnDiskPayloadStorage(s) => s.get_storage_size_bytes(),
             PayloadStorageEnum::MmapPayloadStorage(s) => s.get_storage_size_bytes(),
+            PayloadStorageEnum::Vde(s) => s.get_storage_size_bytes(),
         }
     }
 
@@ -272,6 +289,7 @@ impl PayloadStorage for PayloadStorageEnum {
             #[cfg(feature = "rocksdb")]
             PayloadStorageEnum::OnDiskPayloadStorage(s) => s.is_on_disk(),
             PayloadStorageEnum::MmapPayloadStorage(s) => s.is_on_disk(),
+            PayloadStorageEnum::Vde(s) => s.is_on_disk(),
         }
     }
 }
@@ -288,6 +306,7 @@ impl PayloadStorageEnum {
             #[cfg(feature = "rocksdb")]
             PayloadStorageEnum::OnDiskPayloadStorage(_) => {}
             PayloadStorageEnum::MmapPayloadStorage(s) => s.populate()?,
+            PayloadStorageEnum::Vde(s) => s.populate()?,
         }
         Ok(())
     }
@@ -302,6 +321,7 @@ impl PayloadStorageEnum {
             #[cfg(feature = "rocksdb")]
             PayloadStorageEnum::OnDiskPayloadStorage(_) => {}
             PayloadStorageEnum::MmapPayloadStorage(s) => s.clear_cache()?,
+            PayloadStorageEnum::Vde(s) => s.clear_cache()?,
         }
         Ok(())
     }

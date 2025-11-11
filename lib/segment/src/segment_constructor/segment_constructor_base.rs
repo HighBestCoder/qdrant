@@ -1390,6 +1390,9 @@ fn migrate_rocksdb_payload_storage(
         PayloadStorageEnum::InMemoryPayloadStorage(_) => {
             unreachable!("unexpected payload storage type")
         }
+        PayloadStorageEnum::Vde(_) => {
+            unreachable!("unexpected payload storage type")
+        }
     }
 
     // Also update config in already loaded segment

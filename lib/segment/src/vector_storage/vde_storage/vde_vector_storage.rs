@@ -46,6 +46,19 @@ pub struct VDEVectorStorage {
     deleted: Arc<RwLock<Vec<bool>>>,
 }
 
+impl std::fmt::Debug for VDEVectorStorage {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("VDEVectorStorage")
+            .field("name", &self.name)
+            .field("dimension", &self.dimension)
+            .field("distance", &self.distance)
+            .field("datatype", &self.datatype)
+            .field("path", &self.path)
+            .field("deleted_count", &self.deleted.read().map(|d| d.iter().filter(|&&x| x).count()))
+            .finish()
+    }
+}
+
 impl VDEVectorStorage {
     pub fn new(
         path: &Path,
@@ -292,6 +305,35 @@ impl VectorStorage for VDEVectorStorage {
         // This is unsafe but required by trait
         // In practice, VDE manages deletions internally
         BitSlice::empty()
+    }
+}
+
+impl VDEVectorStorage {
+    /// Get vector dimension
+    pub fn vector_dim(&self) -> usize {
+        self.dimension
+    }
+    
+    /// Get multi-vector config (VDE doesn't support multi-vectors)
+    pub fn multi_vector_config(&self) -> &crate::types::MultiVectorConfig {
+        // VDE doesn't support multi-vectors, this shouldn't be called
+        unimplemented!("VDE doesn't support multi-vectors")
+    }
+    
+    /// Get size of available vectors in bytes
+    pub fn size_of_available_vectors_in_bytes(&self) -> usize {
+        // Estimate: dimension * 4 bytes per f32 * vector count
+        self.dimension * 4 * self.total_vector_count()
+    }
+    
+    /// Populate index (no-op for VDE as it manages its own index)
+    pub fn populate(&self) -> OperationResult<()> {
+        Ok(())
+    }
+    
+    /// Clear cache (no-op for VDE)
+    pub fn clear_cache(&self) -> OperationResult<()> {
+        Ok(())
     }
 }
 

@@ -673,6 +673,10 @@ impl QuantizedVectors {
                 max_threads,
                 stopped,
             ),
+            VectorStorageEnum::Vde(_) => {
+                // VDE doesn't support quantization - return error
+                Err(OperationError::service_error("VDE doesn't support quantization"))
+            }
         }
     }
 

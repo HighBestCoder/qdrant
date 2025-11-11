@@ -20,10 +20,10 @@ fn main() {
     println!("cargo:rustc-link-lib=dylib=stdc++");
     println!("cargo:rustc-link-lib=dylib=vsag");
     
-    // 链接 Btrieve2
-    let btrieve_lib = vde_dir.join("drivers/zendb/lib");
-    println!("cargo:rustc-link-search=native={}", btrieve_lib.display());
+    // 链接 Btrieve2 - 使用实际安装路径
+    println!("cargo:rustc-link-search=native=/usr/local/actianzen/lib64");
     println!("cargo:rustc-link-lib=dylib=btrieveCpp");
+    println!("cargo:rustc-link-lib=dylib=btrieveC");
     
     // 生成 Rust FFI 绑定
     let bindings = bindgen::Builder::default()

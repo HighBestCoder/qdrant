@@ -34,6 +34,16 @@ pub struct VDEPayloadStorage {
     cache: Arc<RwLock<HashMap<PointOffsetType, Payload>>>,
 }
 
+impl std::fmt::Debug for VDEPayloadStorage {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("VDEPayloadStorage")
+            .field("name", &self.name)
+            .field("path", &self.path)
+            .field("cache_size", &self.cache.read().map(|c| c.len()))
+            .finish()
+    }
+}
+
 impl VDEPayloadStorage {
     pub fn new(
         path: &Path,
@@ -318,6 +328,21 @@ impl PayloadStorage for VDEPayloadStorage {
     
     fn is_on_disk(&self) -> bool {
         true // VDE uses Btrieve2 for persistent storage
+    }
+}
+
+impl VDEPayloadStorage {
+    /// Populate payload storage (no-op for VDE)
+    pub fn populate(&self) -> OperationResult<()> {
+        Ok(())
+    }
+    
+    /// Clear cache
+    pub fn clear_cache(&self) -> OperationResult<()> {
+        if let Ok(mut cache) = self.cache.write() {
+            cache.clear();
+        }
+        Ok(())
     }
 }
 
