@@ -4,6 +4,9 @@
 
 set -e
 
+# 确保 poetry 在 PATH 中
+export PATH="/root/.local/bin:$PATH"
+
 # 颜色输出
 RED='\033[0;31m'
 GREEN='\033[0;32m'

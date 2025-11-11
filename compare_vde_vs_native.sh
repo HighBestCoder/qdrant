@@ -9,6 +9,9 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
+# 确保 poetry 在 PATH 中
+export PATH="/root/.local/bin:$PATH"
+
 echo -e "${GREEN}=== VDE vs Native HNSW Performance Comparison ===${NC}"
 echo ""
 
