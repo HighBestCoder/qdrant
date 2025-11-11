@@ -1,0 +1,15 @@
+[package]
+name = "vde-sys"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# No runtime dependencies needed for raw FFI bindings
+
+[build-dependencies]
+bindgen = "0.69"
+cc = "1.0"
+
+[lib]
+name = "vde_sys"
+path = "src/lib.rs"

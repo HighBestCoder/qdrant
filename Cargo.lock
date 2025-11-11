@@ -785,12 +785,15 @@ dependencies = [
  "itertools 0.12.1",
  "lazy_static",
  "lazycell",
+ "log",
+ "prettyplease 0.2.37",
  "proc-macro2",
  "quote",
  "regex",
  "rustc-hash 1.1.0",
  "shlex",
  "syn 2.0.106",
+ "which",
 ]
 
 [[package]]
@@ -5814,6 +5817,7 @@ dependencies = [
  "uuid",
  "validator",
  "vaporetto",
+ "vde-sys",
  "walkdir",
  "zerocopy 0.8.27",
 ]
@@ -7275,6 +7279,14 @@ name = "vcpkg"
 version = "0.2.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "accd4ea62f7bb7a82fe23066fb0957d48ef677f6eeb8215f372f52e48bb32426"
+
+[[package]]
+name = "vde-sys"
+version = "0.1.0"
+dependencies = [
+ "bindgen",
+ "cc",
+]
 
 [[package]]
 name = "version_check"

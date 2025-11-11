@@ -21,6 +21,7 @@ pub mod multi_dense;
 pub mod query;
 pub mod query_scorer;
 pub mod sparse;
+pub mod vde_storage;
 
 pub use raw_scorer::*;
 pub use vector_storage_base::*;
