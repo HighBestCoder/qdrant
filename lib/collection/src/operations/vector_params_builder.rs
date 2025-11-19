@@ -18,6 +18,7 @@ impl VectorParamsBuilder {
                 hnsw_config: None,
                 quantization_config: None,
                 on_disk: None,
+                storage_type: None,
                 datatype: None,
                 multivector_config: None,
             },

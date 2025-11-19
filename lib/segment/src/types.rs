@@ -1401,7 +1401,8 @@ impl SegmentConfig {
 }
 
 /// Storage types for vectors
-#[derive(Debug, Deserialize, Serialize, JsonSchema, Anonymize, Eq, PartialEq, Copy, Clone)]
+#[derive(Debug, Deserialize, Serialize, JsonSchema, Anonymize, Eq, PartialEq, Copy, Clone, Hash)]
+#[serde(rename_all = "snake_case")]
 pub enum VectorStorageType {
     /// Storage in memory (RAM)
     ///
@@ -1420,6 +1421,10 @@ pub enum VectorStorageType {
     ///
     /// Designed as a replacement for `Memory`, which doesn't depend on RocksDB
     InRamChunkedMmap,
+    /// VDE (Vector Data Engine) - uses VSAG HNSW index with Btrieve2/Memory storage
+    ///
+    /// Experimental storage backend with integrated HNSW index
+    Vde,
 }
 
 #[cfg(any(test, feature = "testing"))]
@@ -1475,7 +1480,7 @@ impl VectorStorageType {
     pub fn is_on_disk(&self) -> bool {
         match self {
             Self::Memory | Self::InRamChunkedMmap => false,
-            Self::Mmap | Self::ChunkedMmap => true,
+            Self::Mmap | Self::ChunkedMmap | Self::Vde => true,
         }
     }
 }
@@ -1516,6 +1521,7 @@ impl VectorDataConfig {
             VectorStorageType::Mmap => false,
             VectorStorageType::ChunkedMmap => true,
             VectorStorageType::InRamChunkedMmap => true,
+            VectorStorageType::Vde => false,  // VDE manages its own storage
         };
         is_index_appendable && is_storage_appendable
     }

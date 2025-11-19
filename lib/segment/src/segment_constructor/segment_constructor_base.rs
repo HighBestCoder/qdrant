@@ -219,6 +219,30 @@ pub(crate) fn open_vector_storage(
                 )
             }
         }
+        // VDE storage
+        VectorStorageType::Vde => {
+            use crate::vector_storage::vde_storage::VDEVectorStorage;
+            
+            if vector_config.multivector_config.is_some() {
+                return Err(OperationError::service_error(
+                    "VDE doesn't support multi-vector config"
+                ));
+            }
+            
+            let collection_name = vector_storage_path
+                .file_name()
+                .and_then(|n| n.to_str())
+                .unwrap_or("vde_vectors");
+            
+            Ok(VectorStorageEnum::Vde(
+                VDEVectorStorage::new(
+                    vector_storage_path,
+                    collection_name,
+                    vector_config.size,
+                    vector_config.distance,
+                )?
+            ))
+        }
     }
 }
 

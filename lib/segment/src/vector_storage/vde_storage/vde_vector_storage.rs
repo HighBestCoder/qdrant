@@ -86,7 +86,7 @@ impl VDEVectorStorage {
             if collection.is_null() {
                 // Create new collection
                 let index_type = std::ffi::CString::new("vsag_hnsw").unwrap();
-                let storage_type = std::ffi::CString::new("zendb").unwrap();
+                let storage_type = std::ffi::CString::new("memory").unwrap();
                 let distance_str = std::ffi::CString::new(match distance {
                     Distance::Cosine => "cosine",
                     Distance::Euclid => "euclidean",

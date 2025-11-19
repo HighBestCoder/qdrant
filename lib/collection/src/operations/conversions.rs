@@ -698,6 +698,7 @@ impl TryFrom<api::grpc::qdrant::VectorParams> for VectorParams {
                 .map(grpc_to_segment_quantization_config)
                 .transpose()?,
             on_disk,
+            storage_type: None, // gRPC doesn't support storage_type yet
             datatype: convert_datatype_from_proto(datatype)?,
             multivector_config: multivector_config
                 .map(MultiVectorConfig::try_from)
@@ -1338,6 +1339,7 @@ impl From<VectorParams> for api::grpc::qdrant::VectorParams {
             hnsw_config,
             quantization_config,
             on_disk,
+            storage_type: _, // Ignore storage_type for gRPC (not supported yet)
             datatype,
             multivector_config,
         } = value;

@@ -156,7 +156,7 @@ impl VectorIndex for VDEVectorIndex {
         vectors: &[&QueryVector],
         filter: Option<&Filter>,
         top: usize,
-        _params: Option<&SearchParams>,
+        params: Option<&SearchParams>,
         _query_context: &VectorQueryContext,
     ) -> OperationResult<Vec<Vec<ScoredPointOffset>>> {
         let mut all_results = Vec::with_capacity(vectors.len());
@@ -180,6 +180,16 @@ impl VectorIndex for VDEVectorIndex {
                     dim: dense.len() as u32,
                 };
                 
+                // Convert SearchParams to VDESearchParams
+                let vde_params = params.map(|p| {
+                    let ef = p.hnsw_ef.unwrap_or(0) as u32;
+                    eprintln!("[VDE-INDEX] SearchParams: hnsw_ef={}, exact={}", ef, p.exact);
+                    VDESearchParams {
+                        hnsw_ef: ef,
+                        exact: if p.exact { 1 } else { 0 },
+                    }
+                });
+                
                 let mut results = vec![VDESearchResult { offset: 0, score: 0.0 }; top];
                 let mut result_count: u32 = 0;
                 
@@ -189,19 +199,21 @@ impl VectorIndex for VDEVectorIndex {
                         .map_err(|e| OperationError::service_error(format!("Failed to serialize filter: {}", e)))?;
                     let filter_cstr = std::ffi::CString::new(filter_json).unwrap();
                     
-                    vde_search_filtered(
+                    vde_search_filtered_with_params(
                         self.collection,
                         &vde_query,
                         top as u32,
+                        if vde_params.is_some() { &vde_params.unwrap() as *const VDESearchParams } else { std::ptr::null() },
                         filter_cstr.as_ptr(),
                         results.as_mut_ptr(),
                         &mut result_count,
                     )
                 } else {
-                    vde_search(
+                    vde_search_with_params(
                         self.collection,
                         &vde_query,
                         top as u32,
+                        if vde_params.is_some() { &vde_params.unwrap() as *const VDESearchParams } else { std::ptr::null() },
                         results.as_mut_ptr(),
                         &mut result_count,
                     )

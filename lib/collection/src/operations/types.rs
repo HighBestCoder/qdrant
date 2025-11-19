@@ -1494,6 +1494,14 @@ pub struct VectorParams {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub on_disk: Option<bool>,
 
+    /// Explicitly specify vector storage backend type.
+    /// If specified, overrides `on_disk` setting.
+    /// - "memory" - store in RAM (fast, high memory usage)
+    /// - "mmap" - memory-mapped files (balanced)
+    /// - "vde" - Vector Data Engine with integrated HNSW index
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub storage_type: Option<segment::types::VectorStorageType>,
+
     #[serde(default, skip_serializing_if = "Option::is_none")]
     /// Defines which datatype should be used to represent vectors in the storage.
     /// Choosing different datatypes allows to optimize memory usage and performance vs accuracy.
@@ -1833,6 +1841,7 @@ impl From<&VectorParams> for VectorParamsBase {
             hnsw_config: _,
             quantization_config: _,
             on_disk: _,
+            storage_type: _,
             datatype: _,
             multivector_config: _,
         } = params;

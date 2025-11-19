@@ -500,12 +500,14 @@ impl CollectionParams {
                             .appendable_quantization
                             .then(|| quantization_fn(params.quantization_config.as_ref()))
                             .flatten(),
-                        // Default to in memory storage
-                        storage_type: if params.on_disk.unwrap_or_default() {
-                            VectorStorageType::ChunkedMmap
-                        } else {
-                            VectorStorageType::InRamChunkedMmap
-                        },
+                        // Use explicit storage_type if provided, otherwise infer from on_disk
+                        storage_type: params.storage_type.unwrap_or_else(|| {
+                            if params.on_disk.unwrap_or_default() {
+                                VectorStorageType::ChunkedMmap
+                            } else {
+                                VectorStorageType::InRamChunkedMmap
+                            }
+                        }),
                         multivector_config: params.multivector_config,
                         datatype: params.datatype.map(VectorStorageDatatype::from),
                     },
